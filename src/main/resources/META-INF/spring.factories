@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.sphereon.cas.did.auth.simpleexample.ExampleAuthenticationExecutionPlanConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.sphereon.cas.did.auth.callback.CallbackEndpointControllerConfiguration
