@@ -16,12 +16,14 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,6 +47,7 @@ public class PasswordlessDidAuthenticationConfiguration {
     private final ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
     private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
     private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     public PasswordlessDidAuthenticationConfiguration(@Value("${sphereon.cas.did.auth.appId}") String appId,
                                                       DidMappingService didMappingService,
@@ -53,7 +56,8 @@ public class PasswordlessDidAuthenticationConfiguration {
                                                       @Qualifier("serviceTicketRequestWebflowEventResolver") ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver,
                                                       @Qualifier("adaptiveAuthenticationPolicy") ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy,
                                                       @Qualifier("defaultAuthenticationSystemSupport") ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
-                                                      @Qualifier("servicesManager") ObjectProvider<ServicesManager> servicesManager) {
+                                                      @Qualifier("servicesManager") ObjectProvider<ServicesManager> servicesManager,
+                                                      @Qualifier("defaultPrincipalResolver") ObjectProvider<PrincipalResolver> defaultPrincipalResolver) {
         this.appId = appId;
         this.didMappingService = didMappingService;
         this.didAuthFlow = didAuthFlow;
@@ -63,6 +67,7 @@ public class PasswordlessDidAuthenticationConfiguration {
         this.adaptiveAuthenticationPolicy = adaptiveAuthenticationPolicy;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.servicesManager = servicesManager;
+        this.defaultPrincipalResolver = defaultPrincipalResolver;
     }
 
     @Bean
@@ -135,7 +140,7 @@ public class PasswordlessDidAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
-                passwordlessDidTokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
+                passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
 
 
