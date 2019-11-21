@@ -7,13 +7,16 @@ import com.sphereon.libs.did.auth.client.DisclosureRequestService;
 import com.sphereon.libs.did.auth.client.api.DidTransportsControllerApi;
 import com.sphereon.sdk.did.mapping.api.DidMapControllerApi;
 import com.sphereon.sdk.did.mapping.handler.ApiClient;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.http.HttpClient;
 
 @Configuration
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public class DidAuthClientConfig {
 
 
