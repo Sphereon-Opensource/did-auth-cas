@@ -1,4 +1,4 @@
-package com.sphereon.cas.did.auth.callback;
+package com.sphereon.cas.did.auth.passwordless.callback;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
