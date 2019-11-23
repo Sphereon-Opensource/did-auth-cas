@@ -3,6 +3,7 @@ buildscript {
         mavenLocal()
         mavenCentral()
         jcenter()
+        maven { url "https://jitpack.io" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
@@ -18,6 +19,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
+    maven { url "https://jitpack.io" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
     maven { url "https://repo.spring.io/milestone/" }
@@ -49,13 +51,13 @@ dependencies {
     compile "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-webapp-resources:${casServerVersion}"
 
     //Non CAS dependencies
     implementation "com.sphereon.libs:did-auth-client:1.0.0"
     implementation "org.apache.commons:commons-lang3:3.9"
     implementation "com.github.ben-manes.caffeine:caffeine:2.8.0"
     implementation "com.sphereon.sdk:did-mapping-sdk-java11-native:1.0.0-SNAPSHOT"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.10.1'
 }
 
 tasks.findByName("jibDockerBuild")
@@ -101,6 +103,7 @@ springBoot {
 
 bootWar {
     doFirst {
+
         def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
         if (executable) {
             logger.info "Including launch script for executable WAR artifact"

@@ -36,12 +36,11 @@ public class AcceptPasswordlessDidAuthenticationAction extends AbstractAuthentic
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        String password = requestContext.getRequestParameters().get("password");
         String username = requestContext.getRequestParameters().get("username");
         try {
             Optional<DidToken> currentToken = didTokenRepository.findToken(username);
-
-            if (currentToken.isPresent()) {
+            if (currentToken.isPresent() && currentToken.get().getResponseToken() != null) {
+                String password = currentToken.get().getRequestToken();
                 OneTimePasswordCredential credential = new OneTimePasswordCredential(username, password);
                 WebApplicationService service = WebUtils.getService(requestContext);
                 AuthenticationResult authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
