@@ -1,5 +1,6 @@
 package com.sphereon.cas.did.auth.passwordless.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sphereon.cas.did.auth.passwordless.authentication.PasswordlessDidAuthenticationHandler;
 import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointController;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
@@ -10,6 +11,10 @@ import com.sphereon.cas.did.auth.passwordless.web.flow.PrepareForPasswordlessDid
 import com.sphereon.cas.did.auth.passwordless.web.flow.VerifyPasswordlessDidAuthenticationAction;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import com.sphereon.libs.did.auth.client.DidMappingService;
+import com.sphereon.libs.did.auth.client.DisclosureRequestService;
+import com.sphereon.libs.did.auth.client.api.DidTransportsControllerApi;
+import com.sphereon.sdk.did.mapping.api.DidMapControllerApi;
+import com.sphereon.sdk.did.mapping.handler.ApiClient;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -23,7 +28,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,13 +37,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.webflow.execution.Action;
 
+import java.net.http.HttpClient;
+
 @Configuration("passwordlessAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class PasswordlessDidAuthenticationConfiguration {
 
+    private final int didMapPort;
+    private final String didTransportsUrl;
+    private final String didMapHost;
+    private final String appDid;
+    private final String appSecret;
     private final String appId;
-    private final DidMappingService didMappingService;
-    private final DidAuthFlow didAuthFlow;
 
     private final CasConfigurationProperties casProperties;
     private final ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
@@ -50,17 +59,24 @@ public class PasswordlessDidAuthenticationConfiguration {
     private final ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     public PasswordlessDidAuthenticationConfiguration(@Value("${sphereon.cas.did.auth.appId}") String appId,
-                                                      DidMappingService didMappingService,
-                                                      final DidAuthFlow didAuthFlow, CasConfigurationProperties casProperties,
+                                                      CasConfigurationProperties casProperties,
                                                       @Qualifier("initialAuthenticationAttemptWebflowEventResolver") ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver,
                                                       @Qualifier("serviceTicketRequestWebflowEventResolver") ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver,
                                                       @Qualifier("adaptiveAuthenticationPolicy") ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy,
                                                       @Qualifier("defaultAuthenticationSystemSupport") ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
                                                       @Qualifier("servicesManager") ObjectProvider<ServicesManager> servicesManager,
-                                                      @Qualifier("defaultPrincipalResolver") ObjectProvider<PrincipalResolver> defaultPrincipalResolver) {
+                                                      @Qualifier("defaultPrincipalResolver") ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+                                                      @Value("${sphereon.cas.did.auth.didMapPort}") final int didMapPort,
+                                                      @Value("${sphereon.cas.did.auth.didMapHost}") final String didMapHost,
+                                                      @Value("${sphereon.cas.did.auth.didTransportsUrl}") final String didTransportsUrl,
+                                                      @Value("${sphereon.cas.did.auth.appDid}") final String appDid,
+                                                      @Value("${sphereon.cas.did.auth.appSecret}") final String appSecret) {
+        this.didMapPort = didMapPort;
+        this.didMapHost = didMapHost;
+        this.didTransportsUrl = didTransportsUrl;
+        this.appDid = appDid;
+        this.appSecret = appSecret;
         this.appId = appId;
-        this.didMappingService = didMappingService;
-        this.didAuthFlow = didAuthFlow;
         this.casProperties = casProperties;
         this.initialAuthenticationAttemptWebflowEventResolver = initialAuthenticationAttemptWebflowEventResolver;
         this.serviceTicketRequestWebflowEventResolver = serviceTicketRequestWebflowEventResolver;
@@ -70,9 +86,41 @@ public class PasswordlessDidAuthenticationConfiguration {
         this.defaultPrincipalResolver = defaultPrincipalResolver;
     }
 
+    /*
+    ##################################
+    ##  Did Auth Client Configuration
+    ##################################
+     */
+
     @Bean
-    public CallbackEndpointController getCallbackEndpointController() {
-        return new CallbackEndpointController();
+    public DidMapControllerApi didMapControllerApi() {
+        ApiClient defaultClient = com.sphereon.sdk.did.mapping.handler.Configuration.getDefaultApiClient();
+        defaultClient.setHost(didMapHost);
+        defaultClient.setPort(didMapPort);
+        return new DidMapControllerApi(defaultClient);
+    }
+
+    @Bean
+    public DidMappingService didMappingService() {
+        return new DidMappingService(didMapControllerApi());
+    }
+
+    @Bean
+    public DidTransportsControllerApi didTransportsControllerApi() {
+        var httpClient = HttpClient.newHttpClient();
+        return new DidTransportsControllerApi(httpClient,
+                didTransportsUrl,
+                new ObjectMapper());
+    }
+
+    @Bean
+    public DisclosureRequestService disclosureRequestService() {
+        return new DisclosureRequestService(appDid, appSecret);
+    }
+
+    @Bean
+    public DidAuthFlow didAuthFlow() {
+        return new DidAuthFlow(didMappingService(), didTransportsControllerApi(), disclosureRequestService());
     }
 
     @Bean
@@ -86,6 +134,11 @@ public class PasswordlessDidAuthenticationConfiguration {
     public DidTokenRepository passwordlessTokenRepository() {
         PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
         return new InMemoryDidTokenRepository(tokens.getExpireInSeconds());
+    }
+
+    @Bean
+    public CallbackEndpointController getCallbackEndpointController() {
+        return new CallbackEndpointController(passwordlessTokenRepository());
     }
 
     /*
@@ -103,14 +156,14 @@ public class PasswordlessDidAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
     public Action displayBeforePasswordlessAuthenticationAction() {
-        return new DisplayBeforePasswordlessDidAuthentication(didAuthFlow, didTokenRepository, appId);
+        return new DisplayBeforePasswordlessDidAuthentication(didAuthFlow(), passwordlessTokenRepository(), appId);
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     public Action verifyPasswordlessAccountAuthenticationAction() {
-        return new VerifyPasswordlessDidAuthenticationAction(didMappingService, appId);
+        return new VerifyPasswordlessDidAuthenticationAction(didMappingService(), appId);
     }
 
     @Bean
@@ -132,16 +185,13 @@ public class PasswordlessDidAuthenticationConfiguration {
                 servicesManager.getObject(),
                 passwordlessPrincipalFactory(),
                 null,
-                didAuthFlow,
-                passwordlessTokenRepository());
+                didAuthFlow());
     }
 
-    @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")
     public AuthenticationEventExecutionPlanConfigurer passwordlessAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
                 passwordlessTokenAuthenticationHandler(), defaultPrincipalResolver.getObject());
     }
-
-
 }

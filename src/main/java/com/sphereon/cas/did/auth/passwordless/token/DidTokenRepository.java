@@ -5,6 +5,8 @@ import java.util.Optional;
 public interface DidTokenRepository {
     DidToken createToken(String username, String request);
 
+    void updateToken(String username, String request, String response);
+
     Optional<DidToken> findToken(String username);
 
     void deleteToken(String username);

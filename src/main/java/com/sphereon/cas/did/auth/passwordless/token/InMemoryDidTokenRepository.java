@@ -44,4 +44,10 @@ public class InMemoryDidTokenRepository implements DidTokenRepository {
     public void saveToken(final String username, final DidToken didToken){
         this.storage.put(username, didToken);
     }
+
+    @Override
+    public void updateToken(final String username, final String request, final String response){
+        deleteToken(username);
+        saveToken(username, new DidToken(username, request, response));
+    }
 }

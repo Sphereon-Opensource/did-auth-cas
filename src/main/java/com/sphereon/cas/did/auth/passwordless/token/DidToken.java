@@ -8,6 +8,13 @@ public class DidToken {
     public DidToken(final String username, final String requestToken) {
         this.username = username;
         this.requestToken = requestToken;
+        this.responseToken = null;
+    }
+
+    public DidToken(final String username, final String requestToken, final String responseToken){
+        this.username = username;
+        this.requestToken = requestToken;
+        this.responseToken = responseToken;
     }
 
     public String getResponseToken() {
