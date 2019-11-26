@@ -1,4 +1,4 @@
-import org.apereo.cas.api.*
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccount
 
 def run(Object[] args) {
     def username = args[0]

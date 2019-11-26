@@ -1,4 +1,4 @@
-package org.apereo.cas.impl.token;
+package com.sphereon.did.auth.cas.impl.token;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;

@@ -1,7 +1,7 @@
-package org.apereo.cas.impl.account;
+package com.sphereon.did.auth.cas.impl.account;
 
-import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccount;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccountStore;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,9 +20,6 @@ public class SimplePasswordlessUserAccountStore implements PasswordlessUserAccou
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
-        if (accounts.containsKey(username)) {
-            return Optional.of(accounts.get(username));
-        }
         return Optional.empty();
     }
 }

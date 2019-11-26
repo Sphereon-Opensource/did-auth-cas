@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package com.sphereon.did.auth.cas.web.flow;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;

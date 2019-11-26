@@ -1,4 +1,4 @@
-package org.apereo.cas.api;
+package com.sphereon.did.auth.cas.api;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package org.apereo.cas.impl.token;
+package com.sphereon.did.auth.cas.impl.token;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;

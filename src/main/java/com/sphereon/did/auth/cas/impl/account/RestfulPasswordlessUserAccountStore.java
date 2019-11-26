@@ -1,7 +1,7 @@
-package org.apereo.cas.impl.account;
+package com.sphereon.did.auth.cas.impl.account;
 
-import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccount;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.util.HttpUtils;
 

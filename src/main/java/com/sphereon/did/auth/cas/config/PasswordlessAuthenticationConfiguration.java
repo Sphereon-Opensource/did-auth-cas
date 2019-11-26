@@ -1,32 +1,33 @@
-package org.apereo.cas.config;
+package com.sphereon.did.auth.cas.config;
 
+import com.sphereon.did.auth.cas.callback.AuthCallbackController;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.api.PasswordlessTokenRepository;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccount;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandler;
+import com.sphereon.did.auth.cas.authentication.PasswordlessTokenAuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
-import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
-import org.apereo.cas.impl.account.SimplePasswordlessUserAccountStore;
-import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
-import org.apereo.cas.impl.token.PasswordlessTokenCipherExecutor;
-import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
+import com.sphereon.did.auth.cas.impl.account.GroovyPasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.impl.account.RestfulPasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.impl.account.SimplePasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.impl.token.InMemoryPasswordlessTokenRepository;
+import com.sphereon.did.auth.cas.impl.token.PasswordlessTokenCipherExecutor;
+import com.sphereon.did.auth.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.apereo.cas.web.flow.AcceptPasswordlessAuthenticationAction;
+import com.sphereon.did.auth.cas.web.flow.AcceptPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
-import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
-import org.apereo.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
-import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
+import com.sphereon.did.auth.cas.web.flow.DisplayBeforePasswordlessAuthenticationAction;
+import com.sphereon.did.auth.cas.web.flow.PasswordlessAuthenticationWebflowConfigurer;
+import com.sphereon.did.auth.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -95,6 +96,11 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
+
+    @Bean
+    public AuthCallbackController authCallbackController(){
+        return new AuthCallbackController();
+    }
 
     @Bean
     public PrincipalFactory passwordlessPrincipalFactory() {

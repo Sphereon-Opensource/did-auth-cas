@@ -1,6 +1,6 @@
-package org.apereo.cas.impl.token;
+package com.sphereon.did.auth.cas.impl.token;
 
-import org.apereo.cas.api.PasswordlessTokenRepository;
+import com.sphereon.did.auth.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.util.gen.DefaultRandomNumberGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 

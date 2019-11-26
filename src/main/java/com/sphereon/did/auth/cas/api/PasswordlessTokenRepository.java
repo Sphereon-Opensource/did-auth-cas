@@ -1,4 +1,4 @@
-package org.apereo.cas.api;
+package com.sphereon.did.auth.cas.api;
 
 import java.util.Optional;
 

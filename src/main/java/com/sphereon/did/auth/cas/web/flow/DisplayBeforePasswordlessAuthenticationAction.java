@@ -1,11 +1,12 @@
-package org.apereo.cas.web.flow;
+package com.sphereon.did.auth.cas.web.flow;
 
-import org.apereo.cas.api.PasswordlessTokenRepository;
-import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
+import com.sphereon.did.auth.cas.api.PasswordlessTokenRepository;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccount;
+import com.sphereon.did.auth.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;

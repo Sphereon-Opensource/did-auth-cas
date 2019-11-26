@@ -66,6 +66,11 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-web:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
 
+    // Non CAS dependencies
+    implementation "com.sphereon.libs:did-auth-client:1.0.0"
+    implementation "org.apache.commons:commons-lang3:3.9"
+    implementation "com.sphereon.sdk:did-mapping-sdk-java11-native:1.0.0-SNAPSHOT"
+
 }
 
 tasks.findByName("jibDockerBuild")
