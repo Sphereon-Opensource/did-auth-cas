@@ -5,12 +5,15 @@ buildscript {
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://maven.eveoh.nl/content/repositories/releases" }
+        maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
+        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
     }
 }
 
@@ -22,6 +25,13 @@ repositories {
     maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+    maven { url "https://repo.spring.io/plugins-release/" }
+    maven { url "https://repo.spring.io/milestone/" }
+    maven { url "https://repo.spring.io/snapshot/" }
+    maven { url "https://repo.spring.io/libs-milestone" }
+    maven { url "https://dl.bintray.com/uniconiam/maven" }
+    maven { url "https://jitpack.io" }
+
 }
 
 def casServerVersion = project.'cas.version'
@@ -38,10 +48,24 @@ apply plugin: "org.springframework.boot"
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "com.google.cloud.tools.jib"
+apply plugin: "io.franzbecker.gradle-lombok"
 
 dependencies {
     compile "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}"
     // Other CAS dependencies/modules may be listed here...
+    implementation "org.apereo.cas:cas-server-core-configuration-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-services:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-util-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-cookie-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-tickets-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-logout-api:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-webflow:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-core-web:${casServerVersion}"
+    implementation "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
+
 }
 
 tasks.findByName("jibDockerBuild")
@@ -83,6 +107,10 @@ war {
 
 springBoot {
     mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
+
+lombok {
+    version = "$lombokVersion"
 }
 
 bootWar {
