@@ -1,0 +1,10 @@
+sphereon:
+  cas:
+    did:
+      auth:
+        appId: testAppId
+        appDid: testAppDid
+        didMapPort: 8080
+        didMapHost: localhost
+        didTransportsUrl: http://localhost:3000
+        appSecret: empty
