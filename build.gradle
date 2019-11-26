@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven { url "https://jitpack.io" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
@@ -24,7 +23,6 @@ repositories {
     maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
-    maven { url "https://mvnrepository.com/artifact/" }
 }
 
 def casServerVersion = project.'cas.version'
@@ -43,11 +41,10 @@ apply plugin: "idea"
 apply plugin: "com.google.cloud.tools.jib"
 
 dependencies {
-    //CAS dependencies
     compile "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}"
+    // Other CAS dependencies/modules may be listed here...
     compile "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-authentication:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-core-api-configuration-model:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
@@ -61,8 +58,8 @@ dependencies {
 }
 
 tasks.findByName("jibDockerBuild")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
+        .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
+        .finalizedBy(deleteWebAppFromJib)
 
 configurations.all {
     resolutionStrategy {
@@ -80,8 +77,8 @@ configurations.all {
 
 eclipse {
     classpath {
-       downloadSources = true
-       downloadJavadoc = true
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
 
@@ -103,7 +100,6 @@ springBoot {
 
 bootWar {
     doFirst {
-
         def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
         if (executable) {
             logger.info "Including launch script for executable WAR artifact"
@@ -140,12 +136,12 @@ jib {
          */
         credHelper = "osxkeychain"
         /**
-        auth {
-            username = "*******"
-            password = "*******"
-        }
-        tags = [casServerVersion]
-        */
+         auth {
+         username = "*******"
+         password = "*******"
+         }
+         tags = [casServerVersion]
+         */
     }
     container {
         useCurrentTimestamp = true
@@ -156,7 +152,7 @@ jib {
     extraDirectory {
         path = file('src/main/jib')
         permissions = [
-            '/docker/entrypoint.sh': '755'
+                '/docker/entrypoint.sh': '755'
         ]
     }
 }
