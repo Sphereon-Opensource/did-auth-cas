@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven { url "https://jitpack.io" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://repo.spring.io/libs-snapshot" }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -26,7 +25,6 @@ repositories {
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://repo.spring.io/snapshot/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
-    maven { url "https://mvnrepository.com/artifact/" }
 }
 
 def casServerVersion = project.'cas.version'
@@ -46,11 +44,10 @@ apply from: rootProject.file("gradle/springboot.gradle")
 apply from: rootProject.file("gradle/dockerjib.gradle")
 
 dependencies {
-    //CAS dependencies
     compile "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}"
+    // Other CAS dependencies/modules may be listed here...
     compile "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-authentication:${casServerVersion}"
-    compile "org.apereo.cas:cas-server-core-api-configuration-model:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
@@ -64,8 +61,8 @@ dependencies {
 }
 
 tasks.findByName("jibDockerBuild")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
+        .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
+        .finalizedBy(deleteWebAppFromJib)
 
 tasks.findByName("jib")
     .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
@@ -87,8 +84,8 @@ configurations.all {
 
 eclipse {
     classpath {
-       downloadSources = true
-       downloadJavadoc = true
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
 
@@ -101,7 +98,6 @@ idea {
 
 bootWar {
     doFirst {
-
         def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
         if (executable) {
             logger.info "Including launch script for executable WAR artifact"
@@ -116,4 +112,38 @@ bootWar {
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
     gradleVersion = "${project.gradleVersion}"
+}
+
+jib {
+    from {
+        image = project.baseDockerImage
+    }
+    to {
+        image = "${project.group}/${project.name}"
+        /**
+         ecr-login: Amazon Elastic Container Registry (ECR)
+         gcr: Google Container Registry (GCR)
+         osxkeychain: Docker Hub
+         */
+        credHelper = "osxkeychain"
+        /**
+         auth {
+         username = "*******"
+         password = "*******"
+         }
+         tags = [casServerVersion]
+         */
+    }
+    container {
+        useCurrentTimestamp = true
+        entrypoint = ['docker/entrypoint.sh']
+        ports = ['80', '443', '8080', '8443']
+        labels = [version:casServerVersion, name:project.name, group:project.group]
+    }
+    extraDirectory {
+        path = file('src/main/jib')
+        permissions = [
+                '/docker/entrypoint.sh': '755'
+        ]
+    }
 }
