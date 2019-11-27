@@ -57,6 +57,7 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     private final String appDid;
     private final String appSecret;
     private final String appId;
+    private final String baseCasUrl;
 
     private final CasConfigurationProperties casProperties;
     private final ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
@@ -82,6 +83,7 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
                                                       @Value("${sphereon.cas.did.auth.didTransportsUrl}") final String didTransportsUrl,
                                                       @Value("${sphereon.cas.did.auth.appDid}") final String appDid,
                                                       @Value("${sphereon.cas.did.auth.appSecret}") final String appSecret,
+                                                      @Value("${sphereon.cas.did.auth.baseCasUrl}") final String baseCasUrl,
                                                       ApplicationContext applicationContext,
                                                       FlowBuilderServices flowBuilderServices,
                                                       @Qualifier("loginFlowRegistry") ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry) {
@@ -101,6 +103,7 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
         this.applicationContext = applicationContext;
         this.flowBuilderServices = flowBuilderServices;
         this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
+        this.baseCasUrl = baseCasUrl;
     }
 
     /*
@@ -175,7 +178,7 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @RefreshScope
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
     public Action displayBeforePasswordlessAuthenticationAction() {
-        return new DisplayBeforePasswordlessDidAuthentication(didAuthFlow(), passwordlessTokenRepository(), appId);
+        return new DisplayBeforePasswordlessDidAuthentication(didAuthFlow(), passwordlessTokenRepository(), appId, baseCasUrl);
     }
 
     @Bean
