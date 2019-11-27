@@ -1,5 +1,6 @@
 package com.sphereon.cas.did.auth.passwordless.callback;
 
+import com.sphereon.cas.did.auth.passwordless.callback.model.CallbackTokenPostRequest;
 import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
 import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,16 +38,18 @@ public class CallbackEndpointController {
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity postLoginToken(@PathVariable(value = DidAuthConstants.Param.USERNAME) String username,
-                                         String responseJwt) {
+                                         @RequestBody CallbackTokenPostRequest request) {
         System.out.println("--- Endpoint called ---");
-        System.out.println(username);
-        System.out.println(responseJwt);
+        System.out.println("Username" + username);
+        System.out.println("Access token: " + request.getAccess_token());
+
+        String responseJwt = request.getAccess_token();
         Optional<DidToken> currentToken = didTokenRepository.findToken(username);
         if (currentToken.isEmpty() || currentToken.get().getRequestToken() == null) {
             return ResponseEntity.badRequest().build();
         }
-        String request = currentToken.get().getRequestToken();
-        didTokenRepository.updateToken(username, request, responseJwt);
+        String requestJwt = currentToken.get().getRequestToken();
+        didTokenRepository.updateToken(username, requestJwt, responseJwt);
         return ResponseEntity.ok().build();
     }
 }
