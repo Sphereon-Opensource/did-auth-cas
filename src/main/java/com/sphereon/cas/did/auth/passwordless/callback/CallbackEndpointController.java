@@ -37,6 +37,9 @@ public class CallbackEndpointController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity postLoginToken(@PathVariable(value = DidAuthConstants.Param.USERNAME) String username,
                                          String responseJwt) {
+        System.out.println("--- Endpoint called ---");
+        System.out.println(username);
+        System.out.println(responseJwt);
         Optional<DidToken> currentToken = didTokenRepository.findToken(username);
         if (currentToken.isEmpty() || currentToken.get().getRequestToken() == null) {
             return ResponseEntity.badRequest().build();

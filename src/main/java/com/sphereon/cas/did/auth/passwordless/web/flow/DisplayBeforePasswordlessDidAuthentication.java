@@ -15,7 +15,7 @@ public class DisplayBeforePasswordlessDidAuthentication extends AbstractAction {
     private final DidTokenRepository didTokenRepository;
     private final String appId;
 
-    private final String callbackUrl = "https://localhost:8443/cas/test";
+    private final String callbackUrl = "http://fdab3d90.ngrok.io/cas/login/";
 
     public DisplayBeforePasswordlessDidAuthentication(DidAuthFlow didAuthFlow,
                                                       DidTokenRepository didTokenRepository,
@@ -27,12 +27,15 @@ public class DisplayBeforePasswordlessDidAuthentication extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
+        System.out.println("DisplayBeforePasswordlessDidAuthentication");
         String username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         try {
-            String requestJwt = didAuthFlow.dispatchLoginRequest(appId, username, callbackUrl);
+            System.out.println("Logging in "+ username + " with appId: "+appId);
+            String requestJwt = didAuthFlow.dispatchLoginRequest(appId, username, callbackUrl+username);
+            System.out.println("Request JWT: "+ requestJwt);
             DidToken token = didTokenRepository.createToken(username, requestJwt);
             didTokenRepository.deleteToken(username);
             didTokenRepository.saveToken(username, token);

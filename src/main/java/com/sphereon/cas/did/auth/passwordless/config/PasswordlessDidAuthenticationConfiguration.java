@@ -124,7 +124,9 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
 
     @Bean
     public DidTransportsControllerApi didTransportsControllerApi() {
-        var httpClient = HttpClient.newHttpClient();
+        var httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
         return new DidTransportsControllerApi(httpClient,
                 didTransportsUrl,
                 new ObjectMapper());
