@@ -15,6 +15,7 @@ public class PrepareForPasswordlessDidAuthentication extends InitializeLoginActi
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
+        System.out.println("PrepareForPasswordlessDidAuthentication");
         WebUtils.putPasswordlessAuthenticationEnabled(requestContext, Boolean.TRUE);
         if (!WebUtils.hasPasswordlessAuthenticationAccount(requestContext)) {
             return new EventFactorySupport().event(this, PasswordlessDidAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID);

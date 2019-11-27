@@ -3,8 +3,8 @@ sphereon:
     did:
       auth:
         appId: testAppId
-        appDid: testAppDid
+        appDid: did:ethr:0x88ed694ffe9244e2993d2932638a5c736371fc04
         didMapPort: 8080
         didMapHost: localhost
         didTransportsUrl: http://localhost:3000
-        appSecret: empty
+        appSecret: 2106b0925c0b7486d3474ea0521f0a8750992902c7a13f02498e4066da3cf0f0

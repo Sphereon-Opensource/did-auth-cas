@@ -22,6 +22,7 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) throws Exception {
+        System.out.println("VerifyPasswordlessDidAuthentication - Checking for user info");
         MessageContext messageContext = requestContext.getMessageContext();
         String username = requestContext.getRequestParameters().get("username");
 
@@ -32,7 +33,7 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
         }
         try {
             UserInfo userInfo = didMappingService.getUserInfo(appId, username);
-
+            System.out.println("UserInfo" + userInfo.toString());
             if (StringUtils.isBlank(userInfo.getBoxPub()) || StringUtils.isBlank(userInfo.getDid()) || StringUtils.isBlank(userInfo.getPushToken())) {
                 MessageResolver message = new MessageBuilder().error().code("passwordless.error.invalid.user").build();
                 messageContext.addMessage(message);
