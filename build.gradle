@@ -11,7 +11,8 @@ buildscript {
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
-        classpath "io.freefair.gradle:maven-plugin:${project.gradleMavenPluginVersion}"
+        classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
+        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
     }
 }
 
@@ -39,9 +40,8 @@ apply from: rootProject.file("gradle/tasks.gradle")
 apply plugin: "war"
 apply plugin: "eclipse"
 apply plugin: "idea"
-
-apply from: rootProject.file("gradle/springboot.gradle")
-apply from: rootProject.file("gradle/dockerjib.gradle")
+apply plugin: "com.google.cloud.tools.jib"
+apply plugin: "io.franzbecker.gradle-lombok"
 
 dependencies {
     compile "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}"
@@ -94,6 +94,19 @@ idea {
         downloadJavadoc = true
         downloadSources = true
     }
+}
+
+war {
+    includeWarJars = true
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
+
+lombok {
+    version = "$lombokVersion"
 }
 
 bootWar {
