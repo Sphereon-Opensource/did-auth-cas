@@ -2,6 +2,7 @@ package com.sphereon.cas.did.auth.passwordless.web.flow;
 
 
 import com.sphereon.cas.did.auth.passwordless.api.PasswordlessUserAccount;
+import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
 import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
@@ -16,14 +17,16 @@ public class DisplayBeforePasswordlessDidAuthentication extends AbstractAction {
     private final DidAuthFlow didAuthFlow;
     private final DidTokenRepository didTokenRepository;
     private final String appId;
-    private final String callbackUrl = "https://688dd9a4.ngrok.io/cas/login/";
+    private final String baseCasUrl;
 
     public DisplayBeforePasswordlessDidAuthentication(DidAuthFlow didAuthFlow,
                                                       DidTokenRepository didTokenRepository,
-                                                      final String appId) {
+                                                      final String appId,
+                                                      final String baseCasUrl) {
         this.didAuthFlow = didAuthFlow;
         this.didTokenRepository = didTokenRepository;
         this.appId = appId;
+        this.baseCasUrl = baseCasUrl;
     }
 
     @Override
@@ -32,13 +35,17 @@ public class DisplayBeforePasswordlessDidAuthentication extends AbstractAction {
         String username = requestContext.getRequestParameters().get("username");
         PasswordlessUserAccount user = new PasswordlessUserAccount(username, "email", "phone", "name");
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
+
+        String callbackUrl = baseCasUrl + DidAuthConstants.Endpoints.TokenCallback.NAME + "/" + username;
+        System.out.println("Callback: "+callbackUrl);
+
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         try {
-            System.out.println("Logging in "+ username + " with appId: "+appId);
-            String requestJwt = didAuthFlow.dispatchLoginRequest(appId, username, callbackUrl+username);
-            System.out.println("Request JWT: "+ requestJwt);
+            System.out.println("Logging in " + username + " with appId: " + appId);
+            String requestJwt = didAuthFlow.dispatchLoginRequest(appId, username, callbackUrl);
+            System.out.println("Request JWT: " + requestJwt);
             DidToken token = didTokenRepository.createToken(username, requestJwt);
             didTokenRepository.deleteToken(username);
             didTokenRepository.saveToken(username, token);
