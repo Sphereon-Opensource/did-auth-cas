@@ -4,7 +4,6 @@ buildscript {
         mavenCentral()
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
-        maven { url "https://repo.spring.io/libs-snapshot" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
@@ -24,7 +23,6 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
     maven { url "https://repo.spring.io/milestone/" }
-    maven { url "https://repo.spring.io/snapshot/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
 }
 
@@ -34,10 +32,11 @@ def casWebApplicationBinaryName = "cas.war"
 project.ext."casServerVersion" = casServerVersion
 project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
 
-apply plugin: "io.freefair.war-overlay"
+apply from: rootProject.file("gradle/waroverlay.gradle")
 apply from: rootProject.file("gradle/tasks.gradle")
 
 apply plugin: "war"
+apply plugin: "org.springframework.boot"
 apply plugin: "eclipse"
 apply plugin: "idea"
 apply plugin: "com.google.cloud.tools.jib"
@@ -63,10 +62,6 @@ dependencies {
 tasks.findByName("jibDockerBuild")
         .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
         .finalizedBy(deleteWebAppFromJib)
-
-tasks.findByName("jib")
-    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
-    .finalizedBy(deleteWebAppFromJib)
 
 configurations.all {
     resolutionStrategy {
@@ -118,9 +113,16 @@ bootWar {
         } else {
             logger.info "WAR artifact is not marked as an executable"
         }
+        archiveName "${casWebApplicationBinaryName}"
+        baseName "cas"
+        excludeDevtools = true
     }
 }
 
+bootRun {
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
