@@ -63,7 +63,27 @@ On a successful deployment via the following methods, CAS will be available at:
 
 * `https://cas.server.name:8443/cas`
 
-## Executable WAR
+## Building and running CAS with Passwordless DID Authentication
+
+In order for this application to work, you need to also have connections to both `did-transports-ms` and `did-mapping-ms`:
+* [Did Transports MS](https://github.com/Sphereon/did-transports-ms)
+* [DID Mapping Client](https://github.com/Sphereon/did-mapping-ms)
+
+The locations where these are running needs to be configured in `src/main/resources/application.yml` under the appropriate variables.
+
+```yaml
+sphereon:
+  cas:
+    did:
+      auth:
+        appId: testAppId
+        appDid: did:ethr:0x88ed694ffe9244e2993d2932638a5c736371fc04
+        didMapPort: 8080
+        didMapHost: localhost
+        didTransportsUrl: http://localhost:3000
+        appSecret: 2106b0925c0b7486d3474ea0521f0a8750992902c7a13f02498e4066da3cf0f0
+        baseCasUrl: https://92c3199c.ngrok.io/cas
+```
 
 Run the CAS web application as an executable WAR.
 
