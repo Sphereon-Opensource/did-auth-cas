@@ -1,5 +1,7 @@
 package com.sphereon.cas.did.auth.passwordless.token;
 
+import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
+
 public class DidToken {
     private final String username;
     private String requestToken;
@@ -8,7 +10,7 @@ public class DidToken {
     public DidToken(final String username, final String requestToken) {
         this.username = username;
         this.requestToken = requestToken;
-        this.responseToken = null;
+        this.responseToken = DidAuthConstants.Token.NOT_INITIALIZED;
     }
 
     public DidToken(final String username, final String requestToken, final String responseToken){

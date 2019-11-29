@@ -6,6 +6,7 @@ import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointControlle
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
 import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
 import com.sphereon.cas.did.auth.passwordless.web.flow.AcceptPasswordlessDidAuthenticationAction;
+import com.sphereon.cas.did.auth.passwordless.web.flow.CheckResponseExistencePasswordlessDidAuthenticationAction;
 import com.sphereon.cas.did.auth.passwordless.web.flow.DisplayBeforePasswordlessDidAuthentication;
 import com.sphereon.cas.did.auth.passwordless.web.flow.PasswordlessDidAuthenticationWebflowConfigurer;
 import com.sphereon.cas.did.auth.passwordless.web.flow.PrepareForPasswordlessDidAuthentication;
@@ -178,14 +179,21 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @RefreshScope
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
     public Action displayBeforePasswordlessAuthenticationAction() {
-        return new DisplayBeforePasswordlessDidAuthentication(didAuthFlow(), passwordlessTokenRepository(), appId, baseCasUrl);
+        return new DisplayBeforePasswordlessDidAuthentication();
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     public Action verifyPasswordlessAccountAuthenticationAction() {
-        return new VerifyPasswordlessDidAuthenticationAction(didMappingService(), appId);
+        return new VerifyPasswordlessDidAuthenticationAction(passwordlessTokenRepository(), didAuthFlow(), appId, baseCasUrl);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "checkResponseExistencePasswordlessDidAuthenticationAction")
+    public Action checkResponseExistencePasswordlessDidAuthenticationAction() {
+        return new CheckResponseExistencePasswordlessDidAuthenticationAction(passwordlessTokenRepository());
     }
 
     @Bean
