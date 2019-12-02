@@ -7,9 +7,6 @@ import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import com.sphereon.libs.did.auth.client.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.binding.message.MessageContext;
-import org.springframework.binding.message.MessageResolver;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,18 +27,11 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        LOGGER.info("VerifyPasswordlessDidAuthentication - Dispatching Login Token");
-        MessageContext messageContext = requestContext.getMessageContext();
-
         String username = requestContext.getRequestParameters().get("username");
-        System.out.println("Username: " + username);
-
         String callbackUrl = baseCasUrl + DidAuthConstants.Endpoints.TokenCallback.NAME + "/" + username;
-        System.out.println("Callback: "+callbackUrl);
 
         if (StringUtils.isBlank(username)) {
-            MessageResolver message = new MessageBuilder().error().code("passwordless.error.unknown.user").build();
-            messageContext.addMessage(message);
+            LOGGER.error("Username not found in verify step of webflow");
             return error();
         }
 
@@ -50,8 +40,7 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
             didTokenRepository.saveToken(username, new DidToken(requestJwt));
             return success();
         } catch (UserNotFoundException e) {
-            MessageResolver message = new MessageBuilder().error().code("passwordless.error.invalid.user").build();
-            messageContext.addMessage(message);
+            LOGGER.error("DID account not found for username " + username + " in DID mapping ms");
             return error();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

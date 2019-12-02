@@ -65,7 +65,7 @@ On a successful deployment via the following methods, CAS will be available at:
 
 ## Building and running CAS with Passwordless DID Authentication
 
-In order for this application to work, you need to also have connections to both `did-transports-ms` and `did-mapping-ms`:
+In order for this application to work, you need to setup connections to both `did-transports-ms` and `did-mapping-ms`:
 * [Did Transports MS](https://github.com/Sphereon/did-transports-ms)
 * [DID Mapping Client](https://github.com/Sphereon/did-mapping-ms)
 
@@ -76,14 +76,21 @@ sphereon:
   cas:
     did:
       auth:
-        appId: testAppId
-        appDid: did:ethr:0x88ed694ffe9244e2993d2932638a5c736371fc04
+        appId: <example-app-did>
+        appDid: <example-did>
         didMapPort: 8080
         didMapHost: localhost
         didTransportsUrl: http://localhost:3000
-        appSecret: 2106b0925c0b7486d3474ea0521f0a8750992902c7a13f02498e4066da3cf0f0
-        baseCasUrl: https://92c3199c.ngrok.io/cas
+        appSecret: <example-secret>
+        baseCasUrl: <example-base-url>
 ```
+The uPort app will send the signed response token to the callback based on `<example-base-url>`, note this will only work if `<example-base-url>` is an https address.
+
+In addition, the `etc/cas/config/cas.properties` in this repo contains example configuration for enabling CAS to use http locally. In order to use these options, run:
+```bash
+./build.sh copy
+```
+to copy the configuration over to the machine directory at `/etc/cas/`.
 
 Run the CAS web application as an executable WAR.
 
