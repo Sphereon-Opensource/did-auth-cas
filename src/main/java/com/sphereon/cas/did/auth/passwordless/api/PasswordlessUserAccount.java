@@ -19,7 +19,4 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class PasswordlessUserAccount implements Serializable {
     private String username;
-    private String email;
-    private String phone;
-    private String name;
 }

@@ -22,7 +22,7 @@ public class DisplayBeforePasswordlessDidAuthentication extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         System.out.println("DisplayBeforePasswordlessDidAuthentication");
         String username = requestContext.getRequestParameters().get("username");
-        PasswordlessUserAccount user = new PasswordlessUserAccount(username, "email", "phone", "name");
+        PasswordlessUserAccount user = new PasswordlessUserAccount(username);
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
 
 

@@ -8,4 +8,4 @@ sphereon:
         didMapHost: localhost
         didTransportsUrl: http://localhost:3000
         appSecret: 2106b0925c0b7486d3474ea0521f0a8750992902c7a13f02498e4066da3cf0f0
-        baseCasUrl: https://92c3199c.ngrok.io/cas
+        baseCasUrl: https://b9486907.ngrok.io/cas
