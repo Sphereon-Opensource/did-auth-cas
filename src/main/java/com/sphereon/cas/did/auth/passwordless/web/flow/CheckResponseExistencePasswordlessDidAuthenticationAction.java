@@ -1,15 +1,17 @@
 package com.sphereon.cas.did.auth.passwordless.web.flow;
 
-import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
 import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
 
+@Slf4j
 public class CheckResponseExistencePasswordlessDidAuthenticationAction extends AbstractAction {
     private final DidTokenRepository didTokenRepository;
 
@@ -18,7 +20,7 @@ public class CheckResponseExistencePasswordlessDidAuthenticationAction extends A
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         System.out.println("CheckResponseExistencePasswordlessDidAuthenticaitonAction - Checking for response existence");
         String username = requestContext.getRequestParameters().get("username");
 
@@ -29,16 +31,12 @@ public class CheckResponseExistencePasswordlessDidAuthenticationAction extends A
 
         Optional<DidToken> userToken = didTokenRepository.findToken(username);
         if (userToken.isEmpty()) {
-            System.out.println("User token not found for username: " + username);
-            return error();
+            LOGGER.error("User token not found for username: " + username);
+            return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CANCEL);
         }
 
         DidToken token = userToken.get();
 
-        if (token.getResponseToken() != null && token.getResponseToken().equals(DidAuthConstants.Token.NOT_INITIALIZED)) {
-            return error();
-        }
-
-        return success();
+        return token.getIsResponseReceived() ? success() : error();
     }
 }

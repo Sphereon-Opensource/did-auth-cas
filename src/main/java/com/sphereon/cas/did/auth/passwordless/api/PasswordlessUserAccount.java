@@ -7,12 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-/**
- * This is {@link PasswordlessUserAccount}.
- *
- * @author Misagh Moayyed
- * @since 5.3.0
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

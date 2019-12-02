@@ -6,14 +6,11 @@ import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @RestController
@@ -23,15 +20,6 @@ public class CallbackEndpointController {
 
     public CallbackEndpointController(final DidTokenRepository didTokenRepository) {
         this.didTokenRepository = didTokenRepository;
-    }
-
-    //endpoint can be found at https://localhost:8443/cas/test
-    @GetMapping(value = "/test",
-            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public String generate(final HttpServletResponse response, final HttpServletRequest request) {
-        System.out.println(response);
-        System.out.println(request);
-        return "IT WORKS!";
     }
 
     @PostMapping(value = DidAuthConstants.Endpoints.TokenCallback.POST_LOGIN_TOKEN,
@@ -48,8 +36,8 @@ public class CallbackEndpointController {
         if (currentToken.isEmpty() || currentToken.get().getRequestToken() == null) {
             return ResponseEntity.badRequest().build();
         }
-        String requestJwt = currentToken.get().getRequestToken();
-        didTokenRepository.updateToken(username, requestJwt, responseJwt);
+        DidToken newDidToken = currentToken.get().with(responseJwt);
+        didTokenRepository.saveToken(username, newDidToken);
         return ResponseEntity.ok().build();
     }
 }
