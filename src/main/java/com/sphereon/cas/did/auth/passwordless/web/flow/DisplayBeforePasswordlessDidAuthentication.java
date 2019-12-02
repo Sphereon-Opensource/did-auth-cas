@@ -20,13 +20,9 @@ public class DisplayBeforePasswordlessDidAuthentication extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        System.out.println("DisplayBeforePasswordlessDidAuthentication");
         String username = requestContext.getRequestParameters().get("username");
         PasswordlessUserAccount user = new PasswordlessUserAccount(username);
         WebUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-
-
-
 
         if (StringUtils.isBlank(username)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);

@@ -1,41 +1,33 @@
 package com.sphereon.cas.did.auth.passwordless.token;
 
-import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
-
 public class DidToken {
-    private final String username;
-    private String requestToken;
-    private String responseToken;
+    private final String requestToken;
+    private final String responseToken;
+    private final boolean isResponseReceived;
 
-    public DidToken(final String username, final String requestToken) {
-        this.username = username;
-        this.requestToken = requestToken;
-        this.responseToken = DidAuthConstants.Token.NOT_INITIALIZED;
+    public DidToken(final String requestToken) {
+        this(requestToken, null, false);
     }
 
-    public DidToken(final String username, final String requestToken, final String responseToken){
-        this.username = username;
+    private DidToken(final String requestToken, final String responseToken, final boolean isResponseReceived) {
         this.requestToken = requestToken;
         this.responseToken = responseToken;
+        this.isResponseReceived = isResponseReceived;
     }
 
     public String getResponseToken() {
         return responseToken;
     }
 
-    public void setResponseToken(String responseToken) {
-        this.responseToken = responseToken;
-    }
-
-    public void setRequestToken(String requestToken) {
-        this.requestToken = requestToken;
-    }
-
     public String getRequestToken() {
         return requestToken;
     }
 
-    public String getUsername() {
-        return username;
+    public boolean getIsResponseReceived() {
+        return isResponseReceived;
+    }
+
+    public DidToken with(String responseToken) {
+        return new DidToken(requestToken, responseToken, true);
     }
 }

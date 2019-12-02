@@ -5,6 +5,7 @@ import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import com.sphereon.libs.did.auth.client.exceptions.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
@@ -13,6 +14,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+@Slf4j
 public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
     private final DidTokenRepository didTokenRepository;
     private final DidAuthFlow didAuthFlow;
@@ -28,7 +30,7 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        System.out.println("VerifyPasswordlessDidAuthentication - Dispatching Login Token");
+        LOGGER.info("VerifyPasswordlessDidAuthentication - Dispatching Login Token");
         MessageContext messageContext = requestContext.getMessageContext();
 
         String username = requestContext.getRequestParameters().get("username");
@@ -44,19 +46,15 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
         }
 
         try {
-            System.out.println("Logging in " + username + " with appId: " + appId);
             String requestJwt = didAuthFlow.dispatchLoginRequest(appId, username, callbackUrl);
-            System.out.println("Request JWT: " + requestJwt);
-            DidToken token = didTokenRepository.createToken(username, requestJwt);
-            didTokenRepository.deleteToken(username);
-            didTokenRepository.saveToken(username, token);
+            didTokenRepository.saveToken(username, new DidToken(requestJwt));
             return success();
         } catch (UserNotFoundException e) {
             MessageResolver message = new MessageBuilder().error().code("passwordless.error.invalid.user").build();
             messageContext.addMessage(message);
             return error();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             return error();
         }
     }

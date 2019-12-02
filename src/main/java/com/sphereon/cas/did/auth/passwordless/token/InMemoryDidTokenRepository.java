@@ -2,10 +2,12 @@ package com.sphereon.cas.did.auth.passwordless.token;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class InMemoryDidTokenRepository implements DidTokenRepository {
     private final int tokenExpirationInSeconds;
     private static final int INITIAL_CACHE_SIZE = 50;
@@ -20,14 +22,9 @@ public class InMemoryDidTokenRepository implements DidTokenRepository {
                 .maximumSize(MAX_CACHE_SIZE)
                 .expireAfterWrite(tokenExpirationInSeconds, TimeUnit.SECONDS)
                 .build(s -> {
-                    System.out.println("Load operation of the cache is not supported.");
+                    LOGGER.debug("Load operation of the cache is not supported.");
                     return null;
                 });
-    }
-
-    @Override
-    public DidToken createToken(String username, String requestToken){
-        return new DidToken(username, requestToken);
     }
 
     @Override
@@ -42,12 +39,7 @@ public class InMemoryDidTokenRepository implements DidTokenRepository {
 
     @Override
     public void saveToken(final String username, final DidToken didToken){
-        this.storage.put(username, didToken);
-    }
-
-    @Override
-    public void updateToken(final String username, final String request, final String response){
         deleteToken(username);
-        saveToken(username, new DidToken(username, request, response));
+        this.storage.put(username, didToken);
     }
 }

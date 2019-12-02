@@ -11,8 +11,4 @@ public final class DidAuthConstants {
     public static final class Param {
         public static final String USERNAME = "username";
     }
-
-    public static final class Token {
-        public static final String NOT_INITIALIZED = "not-initialized";
-    }
 }
