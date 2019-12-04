@@ -27,9 +27,6 @@ public class CallbackEndpointController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity postLoginToken(@PathVariable(value = DidAuthConstants.Param.USERNAME) String username,
                                          @RequestBody CallbackTokenPostRequest request) {
-        System.out.println("--- Endpoint called ---");
-        System.out.println("Username: " + username);
-        System.out.println("Access token: " + request.getAccess_token());
 
         String responseJwt = request.getAccess_token();
         Optional<DidToken> currentToken = didTokenRepository.findToken(username);

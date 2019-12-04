@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
@@ -16,7 +15,6 @@ buildscript {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
     maven { url "https://jitpack.io" }
@@ -24,6 +22,22 @@ repositories {
     maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+    maven {
+        name "nexus"
+        url "http://nexus.qa.sphereon.com/nexus/content/repositories/snapshots"
+        credentials {
+            username project.properties["mavenUser"]
+            password project.properties["mavenPassword"]
+        }
+    }
+    maven {
+        name "sphereon-sdk-snapshots"
+        url "http://nexus.qa.sphereon.com/nexus/content/repositories/sphereon-sdk-snapshots"
+        credentials {
+            username project.properties["mavenUser"]
+            password project.properties["mavenPassword"]
+        }
+    }
 }
 
 def casServerVersion = project.'cas.version'
@@ -52,11 +66,16 @@ dependencies {
     compile "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
 
     //Non CAS dependencies
-    implementation "com.sphereon.libs:did-auth-client:1.0.0"
+    implementation "com.sphereon.libs:did-auth-client:1.0.0-SNAPSHOT"
     implementation "org.apache.commons:commons-lang3:3.9"
     implementation "com.github.ben-manes.caffeine:caffeine:2.8.0"
     implementation "com.sphereon.sdk:did-mapping-sdk-java11-native:1.0.0-SNAPSHOT"
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.10.1'
+
+    //Test dependencies
+    testImplementation "org.mockito:mockito-core:1.10.19"
+    testImplementation "junit:junit:4.12"
+    testImplementation "io.rest-assured:rest-assured:4.1.2"
 }
 
 tasks.findByName("jibDockerBuild")
@@ -142,18 +161,15 @@ jib {
          */
         credHelper = "osxkeychain"
         /**
-         auth {
-         username = "*******"
-         password = "*******"
-         }
-         tags = [casServerVersion]
+         auth {username = "*******"
+         password = "*******"}tags = [casServerVersion]
          */
     }
     container {
         useCurrentTimestamp = true
         entrypoint = ['docker/entrypoint.sh']
         ports = ['80', '443', '8080', '8443']
-        labels = [version:casServerVersion, name:project.name, group:project.group]
+        labels = [version: casServerVersion, name: project.name, group: project.group]
     }
     extraDirectory {
         path = file('src/main/jib')

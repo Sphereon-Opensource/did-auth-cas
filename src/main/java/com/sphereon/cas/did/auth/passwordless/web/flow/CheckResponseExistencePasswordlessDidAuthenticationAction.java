@@ -21,11 +21,10 @@ public class CheckResponseExistencePasswordlessDidAuthenticationAction extends A
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        System.out.println("CheckResponseExistencePasswordlessDidAuthenticaitonAction - Checking for response existence");
         String username = requestContext.getRequestParameters().get("username");
 
         if (StringUtils.isBlank(username)) {
-            System.out.println("Username empty.");
+            LOGGER.error("Username empty.");
             return error();
         }
 
@@ -36,7 +35,6 @@ public class CheckResponseExistencePasswordlessDidAuthenticationAction extends A
         }
 
         DidToken token = userToken.get();
-
         return token.getIsResponseReceived() ? success() : error();
     }
 }

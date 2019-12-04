@@ -65,8 +65,8 @@ On a successful deployment via the following methods, CAS will be available at:
 
 ## Building and running CAS with Passwordless DID Authentication
 
-In order for this application to work, you need to setup connections to both `did-transports-ms` and `did-mapping-ms`:
-* [Did Transports MS](https://github.com/Sphereon/did-transports-ms)
+In order for this application to work, you need to setup a connection to both `did-transports-ms` and `did-mapping-ms`:
+* [DID Transports MS](https://github.com/Sphereon/did-transports-ms)
 * [DID Mapping Client](https://github.com/Sphereon/did-mapping-ms)
 
 The locations where these are running needs to be configured in `src/main/resources/application.yml` under the appropriate variables.
@@ -78,8 +78,7 @@ sphereon:
       auth:
         appId: <example-app-did>
         appDid: <example-did>
-        didMapPort: 8080
-        didMapHost: localhost
+        didMapUrl: http://localhost:8080
         didTransportsUrl: http://localhost:3000
         appSecret: <example-secret>
         baseCasUrl: <example-base-url>

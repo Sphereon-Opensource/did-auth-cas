@@ -2,10 +2,6 @@ package com.sphereon.cas.did.auth.passwordless.web.flow;
 
 
 import com.sphereon.cas.did.auth.passwordless.api.PasswordlessUserAccount;
-import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
-import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.WebUtils;

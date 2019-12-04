@@ -36,7 +36,6 @@ public class AcceptPasswordlessDidAuthenticationAction extends AbstractAuthentic
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        System.out.println("AcceptPasswordlessDidAuthentication");
         String username = requestContext.getRequestParameters().get("username");
         try {
             Optional<DidToken> currentToken = didTokenRepository.findToken(username);
