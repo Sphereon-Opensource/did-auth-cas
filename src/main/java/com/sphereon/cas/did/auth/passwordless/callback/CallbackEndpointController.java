@@ -31,6 +31,9 @@ public class CallbackEndpointController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity postLoginToken(@PathVariable(value = DidAuthConstants.Param.USERNAME) String username,
                                          @RequestBody CallbackTokenPostRequest request) {
+        /* TODO: 05-12-19 Here we need to check the validity of the received JWT and if invalid, interrupt the
+            current login session. This will be possible upon implementing https://sphereon.atlassian.net/browse/SPHEREON-824
+        */
         final DidToken currentToken = didTokenRepository.findToken(username)
                 .filter(token -> token.getRequestToken() != null)
                 .orElseThrow(() -> {
