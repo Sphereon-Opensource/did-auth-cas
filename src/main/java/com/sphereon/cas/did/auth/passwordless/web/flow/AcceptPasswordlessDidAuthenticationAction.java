@@ -39,27 +39,26 @@ public class AcceptPasswordlessDidAuthenticationAction extends AbstractAuthentic
         String username = requestContext.getRequestParameters().get("username");
         try {
             Optional<DidToken> currentToken = didTokenRepository.findToken(username);
-            if (currentToken.isPresent() && currentToken.get().getResponseToken() != null) {
-                String password = currentToken.get().getResponseToken();
-                OneTimePasswordCredential credential = new OneTimePasswordCredential(username, password);
-                WebApplicationService service = WebUtils.getService(requestContext);
-                AuthenticationResult authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-                WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-                WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
-                WebUtils.putCredential(requestContext, credential);
-                Event finalEvent = super.doExecute(requestContext);
-                didTokenRepository.deleteToken(username);
-                return finalEvent;
+            if (currentToken.isEmpty() || currentToken.get().getResponseToken() == null) {
+                LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
+                attributes.put("error", new AuthenticationException("Invalid token"));
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
             }
+            String password = currentToken.get().getResponseToken();
+            OneTimePasswordCredential credential = new OneTimePasswordCredential(username, password);
+            WebApplicationService service = WebUtils.getService(requestContext);
+            AuthenticationResult authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+            WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
+            WebUtils.putCredential(requestContext, credential);
+            Event finalEvent = super.doExecute(requestContext);
+            didTokenRepository.deleteToken(username);
+            return finalEvent;
         } catch (final Exception e) {
             LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
             attributes.put("error", e);
             attributes.put("passwordlessAccount", username);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
         }
-        LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
-        attributes.put("error", new AuthenticationException("Invalid token"));
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
     }
-
 }
