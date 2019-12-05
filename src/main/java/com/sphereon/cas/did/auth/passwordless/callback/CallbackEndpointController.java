@@ -5,12 +5,14 @@ import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
 import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Optional;
 
@@ -29,13 +31,14 @@ public class CallbackEndpointController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity postLoginToken(@PathVariable(value = DidAuthConstants.Param.USERNAME) String username,
                                          @RequestBody CallbackTokenPostRequest request) {
+        final DidToken currentToken = didTokenRepository.findToken(username)
+                .filter(token -> token.getRequestToken() != null)
+                .orElseThrow(() -> {
+                    LOGGER.error("Callback endpoint called, but no token found for " + username);
+                    return new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+                });
         String responseJwt = request.getAccess_token();
-        Optional<DidToken> currentToken = didTokenRepository.findToken(username);
-        if (currentToken.isEmpty() || currentToken.get().getRequestToken() == null) {
-            LOGGER.error("Callback endpoint called, but no token found for " + username);
-            return ResponseEntity.badRequest().build();
-        }
-        DidToken newDidToken = currentToken.get().with(responseJwt);
+        DidToken newDidToken = currentToken.with(responseJwt);
         didTokenRepository.saveToken(username, newDidToken);
         return ResponseEntity.ok().build();
     }
