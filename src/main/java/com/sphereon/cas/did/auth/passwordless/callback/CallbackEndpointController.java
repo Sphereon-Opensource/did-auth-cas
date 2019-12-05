@@ -4,6 +4,7 @@ import com.sphereon.cas.did.auth.passwordless.callback.model.CallbackTokenPostRe
 import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
 import com.sphereon.cas.did.auth.passwordless.token.DidToken;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 public class CallbackEndpointController {
 
@@ -27,10 +29,10 @@ public class CallbackEndpointController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity postLoginToken(@PathVariable(value = DidAuthConstants.Param.USERNAME) String username,
                                          @RequestBody CallbackTokenPostRequest request) {
-
         String responseJwt = request.getAccess_token();
         Optional<DidToken> currentToken = didTokenRepository.findToken(username);
         if (currentToken.isEmpty() || currentToken.get().getRequestToken() == null) {
+            LOGGER.error("Callback endpoint called, but no token found for " + username);
             return ResponseEntity.badRequest().build();
         }
         DidToken newDidToken = currentToken.get().with(responseJwt);
