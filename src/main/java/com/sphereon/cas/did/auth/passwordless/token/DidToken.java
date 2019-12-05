@@ -23,7 +23,7 @@ public class DidToken {
         return requestToken;
     }
 
-    public boolean getIsResponseReceived() {
+    public boolean isResponseReceived() {
         return isResponseReceived;
     }
 

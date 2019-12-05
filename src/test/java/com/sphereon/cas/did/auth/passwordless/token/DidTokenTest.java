@@ -10,8 +10,8 @@ public class DidTokenTest {
     @Test
     public void didTokenShouldUpdateIsResponseRecievedWhenAResponseIsAdded(){
         var didToken = new DidToken("request");
-        assertFalse(didToken.getIsResponseReceived());
+        assertFalse(didToken.isResponseReceived());
         var updatedDidToken = didToken.with("response");
-        assertTrue(updatedDidToken.getIsResponseReceived());
+        assertTrue(updatedDidToken.isResponseReceived());
     }
 }

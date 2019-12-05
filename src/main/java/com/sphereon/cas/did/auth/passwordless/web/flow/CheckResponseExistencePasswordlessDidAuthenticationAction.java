@@ -35,6 +35,6 @@ public class CheckResponseExistencePasswordlessDidAuthenticationAction extends A
         }
 
         DidToken token = userToken.get();
-        return token.getIsResponseReceived() ? success() : error();
+        return token.isResponseReceived() ? success() : error();
     }
 }

@@ -34,7 +34,7 @@ public class CallbackEndpointControllerTest {
 
         assertTrue(testUserTokenOptional.isPresent());
         DidToken testUserToken = testUserTokenOptional.get();
-        assertTrue(testUserToken.getIsResponseReceived());
+        assertTrue(testUserToken.isResponseReceived());
         assertEquals(testUserToken.getResponseToken(), "testResponseToken");
     }
 }

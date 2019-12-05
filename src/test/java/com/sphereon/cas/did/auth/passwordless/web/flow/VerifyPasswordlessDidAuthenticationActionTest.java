@@ -52,7 +52,7 @@ public class VerifyPasswordlessDidAuthenticationActionTest {
         verifyAuthenticationAction.execute(requestContext);
         Optional<DidToken> didTokenOptional = didTokenRepository.findToken(testUsername);
         assertTrue(didTokenOptional.isPresent());
-        assertFalse(didTokenOptional.get().getIsResponseReceived());
+        assertFalse(didTokenOptional.get().isResponseReceived());
         assertEquals(didTokenOptional.get().getRequestToken(), "requestToken");
     }
 
