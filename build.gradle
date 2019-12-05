@@ -11,8 +11,16 @@ buildscript {
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
+        classpath "nu.studer:gradle-credentials-plugin:1.0.7"
     }
 }
+
+plugins {
+    id 'nu.studer.credentials' version '1.0.7'
+}
+
+def nexusUser = credentials.nexusUser
+def nexusPassword = credentials.nexusPassword
 
 repositories {
     mavenCentral()
@@ -26,19 +34,20 @@ repositories {
         name "nexus"
         url "http://nexus.qa.sphereon.com/nexus/content/repositories/snapshots"
         credentials {
-            username project.properties["mavenUser"]
-            password project.properties["mavenPassword"]
+            username nexusUser
+            password nexusPassword
         }
     }
     maven {
         name "sphereon-sdk-snapshots"
         url "http://nexus.qa.sphereon.com/nexus/content/repositories/sphereon-sdk-snapshots"
         credentials {
-            username project.properties["mavenUser"]
-            password project.properties["mavenPassword"]
+            username nexusUser
+            password nexusPassword
         }
     }
 }
+
 
 def casServerVersion = project.'cas.version'
 def casWebApplicationBinaryName = "cas.war"
