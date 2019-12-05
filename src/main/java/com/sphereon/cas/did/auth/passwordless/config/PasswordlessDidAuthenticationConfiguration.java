@@ -148,8 +148,8 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
-    public Action verifyPasswordlessAccountAuthenticationAction(DidAuthFlow didAuthFlow) {
-        return new VerifyPasswordlessDidAuthenticationAction(passwordlessTokenRepository(), didAuthFlow, appId, baseCasUrl);
+    public Action verifyPasswordlessAccountAuthenticationAction(DidAuthFlow didAuthFlow, DidTokenRepository didTokenRepository) {
+        return new VerifyPasswordlessDidAuthenticationAction(didTokenRepository, didAuthFlow, appId, baseCasUrl);
     }
 
     @Bean
@@ -199,7 +199,8 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     }
 
     @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan,
+                                              @Qualifier("passwordlessAuthenticationWebflowConfigurer") CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer) {
+        plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer);
     }
 }
