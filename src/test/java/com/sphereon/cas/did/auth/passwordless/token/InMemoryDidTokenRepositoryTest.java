@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class InMemoryDidTokenRepositoryTest {
     private InMemoryDidTokenRepository didTokenRepository;
@@ -19,7 +20,7 @@ public class InMemoryDidTokenRepositoryTest {
     public void didTokenRepositoryShouldPersistTokens() {
         didTokenRepository.saveToken("testUser", new DidToken("testUserRequest"));
         Optional<DidToken> didTokenOptional = didTokenRepository.findToken("testUser");
-        assert(didTokenOptional.isPresent());
+        assertTrue(didTokenOptional.isPresent());
          assertEquals(didTokenOptional.get().getRequestToken(), "testUserRequest");
     }
 
@@ -27,6 +28,6 @@ public class InMemoryDidTokenRepositoryTest {
     public void didTokenRepositoryDeletesTokens(){
         didTokenRepository.saveToken("testUserDelete", new DidToken("testUserDeleteRequest"));
         didTokenRepository.deleteToken("testUserDelete");
-        assert(didTokenRepository.findToken("testUserDelete").isEmpty());
+        assertTrue(didTokenRepository.findToken("testUserDelete").isEmpty());
     }
 }

@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CallbackEndpointControllerTest {
     private DidTokenRepository didTokenRepository;
@@ -31,9 +32,9 @@ public class CallbackEndpointControllerTest {
 
         Optional<DidToken> testUserTokenOptional = didTokenRepository.findToken(testUsername);
 
-        assert(testUserTokenOptional.isPresent());
+        assertTrue(testUserTokenOptional.isPresent());
         DidToken testUserToken = testUserTokenOptional.get();
-        assert(testUserToken.getIsResponseReceived());
+        assertTrue(testUserToken.getIsResponseReceived());
         assertEquals(testUserToken.getResponseToken(), "testResponseToken");
     }
 }
