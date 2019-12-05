@@ -199,8 +199,7 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     }
 
     @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan,
-                                              @Qualifier("passwordlessAuthenticationWebflowConfigurer") CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer) {
-        plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer);
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(passwordlessAuthenticationWebflowConfigurer());
     }
 }
