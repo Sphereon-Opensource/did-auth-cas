@@ -2,6 +2,7 @@ package com.sphereon.cas.did.auth.passwordless.config;
 
 import com.sphereon.cas.did.auth.passwordless.authentication.PasswordlessDidAuthenticationHandler;
 import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointController;
+import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointControllerAdvice;
 import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
 import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
 import com.sphereon.cas.did.auth.passwordless.web.flow.AcceptPasswordlessDidAuthenticationAction;
@@ -125,6 +126,11 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @Bean
     public CallbackEndpointController getCallbackEndpointController(DidTokenRepository didTokenRepository) {
         return new CallbackEndpointController(didTokenRepository);
+    }
+
+    @Bean
+    public CallbackEndpointControllerAdvice callbackEndpointControllerAdvice(){
+        return new CallbackEndpointControllerAdvice();
     }
 
     /*

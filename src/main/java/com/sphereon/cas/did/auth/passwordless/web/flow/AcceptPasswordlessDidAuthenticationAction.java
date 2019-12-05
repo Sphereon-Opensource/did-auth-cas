@@ -38,8 +38,9 @@ public class AcceptPasswordlessDidAuthenticationAction extends AbstractAuthentic
     protected Event doExecute(final RequestContext requestContext) {
         String username = requestContext.getRequestParameters().get("username");
         try {
-            Optional<DidToken> currentToken = didTokenRepository.findToken(username);
-            if (currentToken.isEmpty() || currentToken.get().getResponseToken() == null) {
+            Optional<DidToken> currentToken = didTokenRepository.findToken(username)
+                    .filter(token -> token.getResponseToken() != null);
+            if (currentToken.isEmpty()) {
                 LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
                 attributes.put("error", new AuthenticationException("Invalid token"));
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
