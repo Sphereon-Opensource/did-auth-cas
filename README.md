@@ -63,7 +63,41 @@ On a successful deployment via the following methods, CAS will be available at:
 
 * `https://cas.server.name:8443/cas`
 
-## Executable WAR
+## Building and running CAS with Passwordless DID Authentication
+
+Currently this project is not opensource, therefore it is necessary to add your Sphereon Nexus credentials to the encrypted credentials plugin before building. To do so, execute the following:
+```bash
+gradle addCredentials --key nexusUser --value <insert-your-nexus-username>
+gradle addCredentials --key nexusPassword --value <insert-your-nexus-password>
+``` 
+
+This will encrypt your username and password and add them to `~/.gradle/gradle.encrypted.properties` in your gradle home directory.
+
+In order for this application to work, you need to setup a connection to both `did-transports-ms` and `did-mapping-ms`:
+* [DID Transports MS](https://github.com/Sphereon/did-transports-ms)
+* [DID Mapping Client](https://github.com/Sphereon/did-mapping-ms)
+
+The locations where these are running needs to be configured in `src/main/resources/application.yml` under the appropriate variables.
+
+```yaml
+sphereon:
+  cas:
+    did:
+      auth:
+        appId: <example-app-did>
+        appDid: <example-did>
+        didMapUrl: http://localhost:8080
+        didTransportsUrl: http://localhost:3000
+        appSecret: <example-secret>
+        baseCasUrl: <example-base-url>
+```
+The uPort app will send the signed response token to the callback based on `<example-base-url>`, note this will only work if `<example-base-url>` is an https address.
+
+In addition, the `etc/cas/config/cas.properties` in this repo contains example configuration for enabling CAS to use http locally. In order to use these options, run:
+```bash
+./build.sh copy
+```
+to copy the configuration over to the machine directory at `/etc/cas/`.
 
 Run the CAS web application as an executable WAR.
 
