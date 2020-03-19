@@ -65,14 +65,6 @@ On a successful deployment via the following methods, CAS will be available at:
 
 ## Building and running CAS with Passwordless DID Authentication
 
-Currently this project is not opensource, therefore it is necessary to add your Sphereon Nexus credentials to the encrypted credentials plugin before building. To do so, execute the following:
-```bash
-gradle addCredentials --key nexusUser --value <insert-your-nexus-username>
-gradle addCredentials --key nexusPassword --value <insert-your-nexus-password>
-``` 
-
-This will encrypt your username and password and add them to `~/.gradle/gradle.encrypted.properties` in your gradle home directory.
-
 In order for this application to work, you need to setup a connection to both `did-transports-ms` and `did-mapping-ms`:
 * [DID Transports MS](https://github.com/Sphereon/did-transports-ms)
 * [DID Mapping Client](https://github.com/Sphereon/did-mapping-ms)
