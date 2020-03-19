@@ -11,16 +11,8 @@ buildscript {
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
-        classpath "nu.studer:gradle-credentials-plugin:1.0.7"
     }
 }
-
-plugins {
-    id 'nu.studer.credentials' version '1.0.7'
-}
-
-def nexusUser = credentials.nexusUser
-def nexusPassword = credentials.nexusPassword
 
 repositories {
     mavenCentral()
@@ -31,20 +23,20 @@ repositories {
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
     maven {
-        name "nexus"
-        url "http://nexus.qa.sphereon.com/nexus/content/repositories/snapshots"
-        credentials {
-            username nexusUser
-            password nexusPassword
-        }
+        name "sphereon-opensource-snapshots"
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-opensource-snapshots"
+    }
+    maven {
+        name "sphereon-opensource-releases"
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-opensource-releases"
     }
     maven {
         name "sphereon-sdk-snapshots"
-        url "http://nexus.qa.sphereon.com/nexus/content/repositories/sphereon-sdk-snapshots"
-        credentials {
-            username nexusUser
-            password nexusPassword
-        }
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-sdk-snapshots"
+    }
+    maven {
+        name "sphereon-sdk-releases"
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-sdk-releases"
     }
 }
 
@@ -72,6 +64,7 @@ dependencies {
     compile "org.apereo.cas:cas-server-core-authentication:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
 
     //Non CAS dependencies
