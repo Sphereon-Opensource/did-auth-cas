@@ -12,8 +12,8 @@ mkdir -p /etc/cas/services
 
 #echo -e "\nMoving CAS configuration artifacts..."
 mv docker/cas/thekeystore /etc/cas 2>/dev/null
-mv docker/cas/config/*.* /etc/cas/config 2>/dev/null
-mv docker/cas/services/*.* /etc/cas/services 2>/dev/null
+# mv docker/cas/config/*.* /etc/cas/config 2>/dev/null  - Disabled as this will be handled by a volume mount instead
+# mv docker/cas/services/*.* /etc/cas/services 2>/dev/null - Disabled as this will be handled by a volume mount instead
 
 #echo -e "\nListing CAS configuration under /etc/cas..."
 #ls -R /etc/cas

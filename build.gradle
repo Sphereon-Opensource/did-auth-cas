@@ -11,18 +11,11 @@ buildscript {
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
-        classpath "nu.studer:gradle-credentials-plugin:1.0.7"
     }
 }
 
-plugins {
-    id 'nu.studer.credentials' version '1.0.7'
-}
-
-def nexusUser = credentials.nexusUser
-def nexusPassword = credentials.nexusPassword
-
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
     maven { url "https://jitpack.io" }
@@ -31,26 +24,27 @@ repositories {
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
     maven {
-        name "nexus"
-        url "http://nexus.qa.sphereon.com/nexus/content/repositories/snapshots"
-        credentials {
-            username nexusUser
-            password nexusPassword
-        }
+        name "sphereon-opensource-snapshots"
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-opensource-snapshots"
+    }
+    maven {
+        name "sphereon-opensource-releases"
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-opensource-releases"
     }
     maven {
         name "sphereon-sdk-snapshots"
-        url "http://nexus.qa.sphereon.com/nexus/content/repositories/sphereon-sdk-snapshots"
-        credentials {
-            username nexusUser
-            password nexusPassword
-        }
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-sdk-snapshots"
+    }
+    maven {
+        name "sphereon-sdk-releases"
+        url "http://nexus.qa.sphereon.com/nexus/repository/sphereon-sdk-releases"
     }
 }
 
 
 def casServerVersion = project.'cas.version'
 def casWebApplicationBinaryName = "cas.war"
+def image_group = "sphereon"
 
 project.ext."casServerVersion" = casServerVersion
 project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
@@ -72,6 +66,7 @@ dependencies {
     compile "org.apereo.cas:cas-server-core-authentication:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-web-api:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-actions:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-webflow-api:${casServerVersion}"
 
     //Non CAS dependencies
@@ -79,6 +74,8 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:3.9"
     implementation "com.github.ben-manes.caffeine:caffeine:2.8.0"
     implementation "com.sphereon.sdk:did-mapping-sdk-java11-native:1.0.0-SNAPSHOT"
+    implementation "org.springframework.boot:spring-boot:2.1.2.RELEASE"
+    implementation "org.apache.tomcat:tomcat-catalina-ha:9.0.27"
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.9'
 
     //Test dependencies
@@ -162,7 +159,7 @@ jib {
         image = project.baseDockerImage
     }
     to {
-        image = "${project.group}/${project.name}"
+        image = "${image_group}/${project.name}"
         /**
          ecr-login: Amazon Elastic Container Registry (ECR)
          gcr: Google Container Registry (GCR)
@@ -177,7 +174,7 @@ jib {
     container {
         useCurrentTimestamp = true
         entrypoint = ['docker/entrypoint.sh']
-        ports = ['80', '443', '8080', '8443']
+        ports = ['8080', '8009']
         labels = [version: casServerVersion, name: project.name, group: project.group]
     }
     extraDirectory {

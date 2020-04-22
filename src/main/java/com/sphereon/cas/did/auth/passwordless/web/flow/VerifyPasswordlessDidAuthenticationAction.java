@@ -43,7 +43,8 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
             LOGGER.error("DID account not found for username " + username + " in DID mapping ms");
             return error();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error(String.format("Login request failed for app id %s and user %s. The callback url is %s",
+                    appId, username, callbackUrl), e);
             return error();
         }
     }
