@@ -1,7 +1,7 @@
 package com.sphereon.cas.did.auth.passwordless.authentication;
 
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import com.sphereon.libs.did.auth.client.exceptions.MalformedLoginJwtException;
 import org.apereo.cas.authentication.PreventedException;

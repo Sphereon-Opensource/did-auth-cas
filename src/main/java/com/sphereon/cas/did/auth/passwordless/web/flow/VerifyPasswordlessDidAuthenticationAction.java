@@ -1,8 +1,8 @@
 package com.sphereon.cas.did.auth.passwordless.web.flow;
 
 import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import com.sphereon.libs.did.auth.client.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class VerifyPasswordlessDidAuthenticationAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext requestContext) {
         String username = requestContext.getRequestParameters().get("username");
-        String callbackUrl = baseCasUrl + DidAuthConstants.Endpoints.TokenCallback.NAME + "/" + username;
+        String callbackUrl = baseCasUrl + DidAuthConstants.Endpoints.TokenCallback.LOGIN + "/" + username;
 
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Username not found in verify step of webflow");

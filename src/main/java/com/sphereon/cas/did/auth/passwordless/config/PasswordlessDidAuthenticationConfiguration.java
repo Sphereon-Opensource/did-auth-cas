@@ -3,14 +3,11 @@ package com.sphereon.cas.did.auth.passwordless.config;
 import com.sphereon.cas.did.auth.passwordless.authentication.PasswordlessDidAuthenticationHandler;
 import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointController;
 import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointControllerAdvice;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
-import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
-import com.sphereon.cas.did.auth.passwordless.web.flow.AcceptPasswordlessDidAuthenticationAction;
-import com.sphereon.cas.did.auth.passwordless.web.flow.CheckResponseExistencePasswordlessDidAuthenticationAction;
-import com.sphereon.cas.did.auth.passwordless.web.flow.DisplayBeforePasswordlessDidAuthentication;
-import com.sphereon.cas.did.auth.passwordless.web.flow.PasswordlessDidAuthenticationWebflowConfigurer;
-import com.sphereon.cas.did.auth.passwordless.web.flow.PrepareForPasswordlessDidAuthentication;
-import com.sphereon.cas.did.auth.passwordless.web.flow.VerifyPasswordlessDidAuthenticationAction;
+import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryRegsitrationQRCodeRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.RegistrationQRCodeRepository;
+import com.sphereon.cas.did.auth.passwordless.web.flow.*;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -124,6 +121,14 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "registrationQRCodeRepository")
+    public RegistrationQRCodeRepository registrationQRCodeRepository() {
+        PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
+        return new InMemoryRegsitrationQRCodeRepository(tokens.getExpireInSeconds());
+    }
+
+    @Bean
     public CallbackEndpointController getCallbackEndpointController(DidTokenRepository didTokenRepository) {
         return new CallbackEndpointController(didTokenRepository);
     }
@@ -156,6 +161,13 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @ConditionalOnMissingBean(name = "verifyPasswordlessAccountAuthenticationAction")
     public Action verifyPasswordlessAccountAuthenticationAction(DidAuthFlow didAuthFlow, DidTokenRepository didTokenRepository) {
         return new VerifyPasswordlessDidAuthenticationAction(didTokenRepository, didAuthFlow, appId, baseCasUrl);
+    }
+
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "registerForDidAuthenticationAction")
+    public Action registerForDidAuthenticationAction(DidAuthFlow didAuthFlow, RegistrationQRCodeRepository registrationQRCodeRepository) {
+        return new RegisterForDidAuthenticationAction(registrationQRCodeRepository, didAuthFlow, appId, baseCasUrl);
     }
 
     @Bean

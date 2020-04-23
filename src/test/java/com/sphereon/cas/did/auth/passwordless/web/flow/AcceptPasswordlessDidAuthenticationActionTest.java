@@ -1,9 +1,8 @@
 package com.sphereon.cas.did.auth.passwordless.web.flow;
 
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
-import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
-import com.sphereon.libs.did.auth.client.DidAuthFlow;
+import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.CasWebflowConstants;

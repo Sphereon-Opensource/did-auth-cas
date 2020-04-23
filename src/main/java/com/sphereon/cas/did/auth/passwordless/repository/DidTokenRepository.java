@@ -1,4 +1,4 @@
-package com.sphereon.cas.did.auth.passwordless.token;
+package com.sphereon.cas.did.auth.passwordless.repository;
 
 import java.util.Optional;
 

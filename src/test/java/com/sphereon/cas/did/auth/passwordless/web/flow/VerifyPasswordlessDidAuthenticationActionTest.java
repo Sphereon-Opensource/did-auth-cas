@@ -1,8 +1,8 @@
 package com.sphereon.cas.did.auth.passwordless.web.flow;
 
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
-import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import com.sphereon.libs.did.auth.client.exceptions.UserNotFoundException;
 import org.junit.Before;

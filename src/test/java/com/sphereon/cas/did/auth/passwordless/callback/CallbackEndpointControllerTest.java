@@ -1,9 +1,9 @@
 package com.sphereon.cas.did.auth.passwordless.callback;
 
 import com.sphereon.cas.did.auth.passwordless.callback.model.CallbackTokenPostRequest;
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
-import com.sphereon.cas.did.auth.passwordless.token.InMemoryDidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,8 +2,8 @@ package com.sphereon.cas.did.auth.passwordless.callback;
 
 import com.sphereon.cas.did.auth.passwordless.callback.model.CallbackTokenPostRequest;
 import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
-import com.sphereon.cas.did.auth.passwordless.token.DidToken;
-import com.sphereon.cas.did.auth.passwordless.token.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
-
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -45,4 +43,6 @@ public class CallbackEndpointController {
         didTokenRepository.saveToken(username, newDidToken);
         return ResponseEntity.ok().build();
     }
+
+    // TODO: Add handler for DidAuthConstants.Endpoints.TokenCallback.REGISTER
 }
