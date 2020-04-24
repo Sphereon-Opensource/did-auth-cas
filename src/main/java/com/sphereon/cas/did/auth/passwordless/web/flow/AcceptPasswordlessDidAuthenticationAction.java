@@ -1,6 +1,6 @@
 package com.sphereon.cas.did.auth.passwordless.web.flow;
 
-import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.model.DidToken;
 import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;

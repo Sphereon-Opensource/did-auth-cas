@@ -5,8 +5,8 @@ import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointControlle
 import com.sphereon.cas.did.auth.passwordless.callback.CallbackEndpointControllerAdvice;
 import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
 import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
-import com.sphereon.cas.did.auth.passwordless.repository.InMemoryRegsitrationQRCodeRepository;
-import com.sphereon.cas.did.auth.passwordless.repository.RegistrationQRCodeRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.InMemoryRegistrationRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.RegistrationRepository;
 import com.sphereon.cas.did.auth.passwordless.web.flow.*;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -123,9 +123,9 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "registrationQRCodeRepository")
-    public RegistrationQRCodeRepository registrationQRCodeRepository() {
+    public RegistrationRepository registrationQRCodeRepository() {
         PasswordlessAuthenticationProperties.Tokens tokens = casProperties.getAuthn().getPasswordless().getTokens();
-        return new InMemoryRegsitrationQRCodeRepository(tokens.getExpireInSeconds());
+        return new InMemoryRegistrationRepository(tokens.getExpireInSeconds());
     }
 
     @Bean
@@ -166,8 +166,8 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "registerForDidAuthenticationAction")
-    public Action registerForDidAuthenticationAction(DidAuthFlow didAuthFlow, RegistrationQRCodeRepository registrationQRCodeRepository) {
-        return new RegisterForDidAuthenticationAction(registrationQRCodeRepository, didAuthFlow, appId, baseCasUrl);
+    public Action registerForDidAuthenticationAction(DidAuthFlow didAuthFlow, RegistrationRepository registrationRepository) {
+        return new RegisterForDidAuthenticationAction(registrationRepository, didAuthFlow, appId, baseCasUrl);
     }
 
     @Bean

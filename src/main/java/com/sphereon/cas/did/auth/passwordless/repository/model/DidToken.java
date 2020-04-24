@@ -1,4 +1,4 @@
-package com.sphereon.cas.did.auth.passwordless.repository;
+package com.sphereon.cas.did.auth.passwordless.repository.model;
 
 public class DidToken {
     private final String requestToken;

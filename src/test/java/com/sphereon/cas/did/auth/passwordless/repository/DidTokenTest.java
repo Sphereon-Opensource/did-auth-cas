@@ -1,5 +1,6 @@
 package com.sphereon.cas.did.auth.passwordless.repository;
 
+import com.sphereon.cas.did.auth.passwordless.repository.model.DidToken;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

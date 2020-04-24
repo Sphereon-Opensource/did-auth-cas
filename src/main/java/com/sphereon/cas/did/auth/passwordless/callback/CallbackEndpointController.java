@@ -1,9 +1,16 @@
 package com.sphereon.cas.did.auth.passwordless.callback;
 
+import com.sphereon.cas.did.auth.passwordless.callback.model.CallbackRegistrationRequest;
 import com.sphereon.cas.did.auth.passwordless.callback.model.CallbackTokenPostRequest;
 import com.sphereon.cas.did.auth.passwordless.config.DidAuthConstants;
-import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.RegistrationRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.model.DidToken;
 import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
+import com.sphereon.cas.did.auth.passwordless.repository.model.RegistrationRequest;
+import com.sphereon.libs.did.auth.client.DidAuthFlow;
+import com.sphereon.libs.did.auth.client.KUtilsKt;
+import com.sphereon.libs.did.auth.client.model.UserInfo;
+import kotlin.Triple;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,10 +25,17 @@ import org.springframework.web.client.HttpClientErrorException;
 @RestController
 public class CallbackEndpointController {
 
+    private final DidAuthFlow didAuthFlow;
+
     private final DidTokenRepository didTokenRepository;
 
-    public CallbackEndpointController(final DidTokenRepository didTokenRepository) {
+    private final RegistrationRepository registrationRepository;
+
+    public CallbackEndpointController(final DidAuthFlow didAuthFlow, final DidTokenRepository didTokenRepository,
+                                      final RegistrationRepository registrationRepository) {
+        this.didAuthFlow = didAuthFlow;
         this.didTokenRepository = didTokenRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     @PostMapping(value = DidAuthConstants.Endpoints.TokenCallback.POST_LOGIN_TOKEN,
@@ -44,5 +58,22 @@ public class CallbackEndpointController {
         return ResponseEntity.ok().build();
     }
 
-    // TODO: Add handler for DidAuthConstants.Endpoints.TokenCallback.REGISTER
+
+    @PostMapping(value = DidAuthConstants.Endpoints.TokenCallback.REGISTER,
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity registerDid(@RequestBody CallbackRegistrationRequest request) {
+
+        final String requestJwt = request.getAccess_token();
+        final String registrationId = didAuthFlow.registrationRequestIdFromToken(requestJwt);
+        final var registrationRequest = registrationRepository.findRegistrationRequest(registrationId)
+                .orElseThrow(() -> {
+                    LOGGER.error(String.format("Callback endpoint called, but registrationId %s found for.", registrationId));
+                    return new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+                });
+
+        final var userInfo = new UserInfo(request.getDid(), request.getBoxPub(), request.getPushToken());
+        didAuthFlow.registerDidMapping(registrationRequest.getAppId(), registrationRequest.getUserName(), userInfo);
+        return ResponseEntity.ok().build();
+    }
 }

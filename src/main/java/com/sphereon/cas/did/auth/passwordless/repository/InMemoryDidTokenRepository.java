@@ -2,6 +2,7 @@ package com.sphereon.cas.did.auth.passwordless.repository;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.sphereon.cas.did.auth.passwordless.repository.model.DidToken;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;

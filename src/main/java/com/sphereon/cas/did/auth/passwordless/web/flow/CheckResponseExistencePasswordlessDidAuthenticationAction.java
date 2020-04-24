@@ -1,6 +1,6 @@
 package com.sphereon.cas.did.auth.passwordless.web.flow;
 
-import com.sphereon.cas.did.auth.passwordless.repository.DidToken;
+import com.sphereon.cas.did.auth.passwordless.repository.model.DidToken;
 import com.sphereon.cas.did.auth.passwordless.repository.DidTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
