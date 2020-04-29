@@ -18,11 +18,11 @@ public class PasswordlessDidAuthenticationWebflowConfigurer extends AbstractCasW
     private static final String STATE_ID_PASSWORDLESS_DISPLAY = "passwordlessDisplayUser";
     private static final String STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT = "passwordlessVerifyAccount";
     private static final String STATE_ID_PASSWORDLESS_CHECK_RESPONSE = "passwordlessCheckResponse";
-    private static final String STATE_ID_PASSWORDLESS_REGISTER_ACCOUNT = "passwordlessRegisterAccount";
+    private static final String STATE_ID_DID_CREATE_REGISTRATION_REQUEST = "didCreateRegistrationRequest";
+    private static final String STATE_ID_DID_REGISTRATION_REQUEST_DISPLAY = "didRegistrationRequestDisplay";
 
     private static final String STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION = "acceptPasswordlessAuthentication";
     private static final String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
-    private static final String STATE_ID_PASSWORDLESS_REGISTER_DISPLAY = "passwordlessRegisterAccountView";
 
     private static final String STATE_ID_AUTHENTICATION_FAILED = "passwordlessAuthenticationFailedView";
 
@@ -44,15 +44,15 @@ public class PasswordlessDidAuthenticationWebflowConfigurer extends AbstractCasW
 
         ViewState viewState = createViewState(flow, STATE_ID_PASSWORDLESS_GET_USERID, "casPasswordlessGetUserIdView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
-        createTransitionForState(viewState, "REGISTER", STATE_ID_PASSWORDLESS_REGISTER_ACCOUNT); // TODO criteria possible for submit button value?
+        createTransitionForState(viewState, "REGISTER", STATE_ID_DID_CREATE_REGISTRATION_REQUEST); // TODO criteria possible for submit button value?
 
         ActionState verifyAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT, "verifyPasswordlessAccountAuthenticationAction");
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR, STATE_ID_AUTHENTICATION_FAILED);
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_DISPLAY);
 
-        ActionState registerAccountState = createActionState(flow, STATE_ID_PASSWORDLESS_REGISTER_ACCOUNT, "registerForDidAuthenticationAction");
-        createTransitionForState(registerAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_PASSWORDLESS_REGISTER_DISPLAY);
-        ViewState viewStateRegister = createViewState(flow, STATE_ID_PASSWORDLESS_REGISTER_DISPLAY, "casPasswordlessRegisterAccountView");
+        ActionState registerAccountState = createActionState(flow, STATE_ID_DID_CREATE_REGISTRATION_REQUEST, "createDidRegistrationRequestAction");
+        createTransitionForState(registerAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_DID_REGISTRATION_REQUEST_DISPLAY);
+        ViewState viewStateRegister = createViewState(flow, STATE_ID_DID_REGISTRATION_REQUEST_DISPLAY, "casRegisterDidView");
         /* TODO We have to wait for a callback from uPort and only after registering the did in the mapping-ms
             we need to go back to STATE_ID_PASSWORDLESS_GET_USERID
          */

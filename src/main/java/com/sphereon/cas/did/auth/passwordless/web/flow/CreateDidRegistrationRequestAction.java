@@ -13,13 +13,13 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-public class RegisterForDidAuthenticationAction extends AbstractAction {
+public class CreateDidRegistrationRequestAction extends AbstractAction {
     private final RegistrationRepository registrationRepository;
     private final DidAuthFlow didAuthFlow;
     private final String appId;
     private final String baseCasUrl;
 
-    public RegisterForDidAuthenticationAction(RegistrationRepository registrationRepository, DidAuthFlow didAuthFlow, String appId, String baseCasUrl) {
+    public CreateDidRegistrationRequestAction(RegistrationRepository registrationRepository, DidAuthFlow didAuthFlow, String appId, String baseCasUrl) {
         this.registrationRepository = registrationRepository;
         this.didAuthFlow = didAuthFlow;
         this.appId = appId;
@@ -38,6 +38,8 @@ public class RegisterForDidAuthenticationAction extends AbstractAction {
                     .registrationId(registrationId)
                     .qrCodeBase64(didAuthFlow.dispatchRegistrationRequest(registrationId, callbackUrl));
             registrationRepository.saveRegistrationRequest(registrationId, registrationRequest);
+
+            requestContext.getFlowScope().put("didRegistrationQR", registrationRequest.getQrCodeBase64());
             return success();
         } catch (Exception e) {
             LOGGER.error(String.format("DID registration request failed for app id %s. The callback url is %s",

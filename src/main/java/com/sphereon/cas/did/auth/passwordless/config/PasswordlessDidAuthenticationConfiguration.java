@@ -167,7 +167,7 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     @RefreshScope
     @ConditionalOnMissingBean(name = "registerForDidAuthenticationAction")
     public Action registerForDidAuthenticationAction(DidAuthFlow didAuthFlow, RegistrationRepository registrationRepository) {
-        return new RegisterForDidAuthenticationAction(registrationRepository, didAuthFlow, appId, baseCasUrl);
+        return new CreateDidRegistrationRequestAction(registrationRepository, didAuthFlow, appId, baseCasUrl);
     }
 
     @Bean
