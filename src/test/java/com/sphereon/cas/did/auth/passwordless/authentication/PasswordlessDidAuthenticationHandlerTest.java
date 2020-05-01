@@ -3,7 +3,7 @@ package com.sphereon.cas.did.auth.passwordless.authentication;
 import com.sphereon.cas.did.auth.passwordless.repository.model.DidToken;
 import com.sphereon.cas.did.auth.passwordless.repository.InMemoryDidTokenRepository;
 import com.sphereon.libs.did.auth.client.DidAuthFlow;
-import com.sphereon.libs.did.auth.client.exceptions.MalformedLoginJwtException;
+import com.sphereon.libs.did.auth.client.exceptions.MalformedJwtException;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -49,7 +49,7 @@ public class PasswordlessDidAuthenticationHandlerTest {
         repository.saveToken("testUser", token.with("testResponseToken"));
         var c = new OneTimePasswordCredential("testUser", "testResponseToken");
         when(didAuthFlow.verifyLoginToken("testResponseToken"))
-                .thenThrow(new MalformedLoginJwtException("JWT does not contain correct signature"));
+                .thenThrow(new MalformedJwtException("JWT does not contain correct signature"));
         passwordlessDidAuthenticationHandler.authenticate(c);
     }
 }

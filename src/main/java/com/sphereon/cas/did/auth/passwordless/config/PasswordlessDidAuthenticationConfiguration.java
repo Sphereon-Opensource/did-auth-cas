@@ -129,12 +129,13 @@ public class PasswordlessDidAuthenticationConfiguration implements CasWebflowExe
     }
 
     @Bean
-    public CallbackEndpointController getCallbackEndpointController(DidTokenRepository didTokenRepository) {
-        return new CallbackEndpointController(didTokenRepository);
+    public CallbackEndpointController getCallbackEndpointController(DidAuthFlow didAuthFlow, DidTokenRepository didTokenRepository,
+                                                                    RegistrationRepository registrationRepository) {
+        return new CallbackEndpointController(didAuthFlow, didTokenRepository, registrationRepository);
     }
 
     @Bean
-    public CallbackEndpointControllerAdvice callbackEndpointControllerAdvice(){
+    public CallbackEndpointControllerAdvice callbackEndpointControllerAdvice() {
         return new CallbackEndpointControllerAdvice();
     }
 
